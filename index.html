@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+     <style>
+    #map {height: 600px;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"  integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+     crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+     integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+     crossorigin=""></script>
+</head>
+<body>
+<h1 title="item1">Header 1</h1>
+<form action="" method="get" class="form-example">
+  <div class="form-example">
+    <label for="name">City </label>
+    <input type="text" name="city" id="name" required>
+  </div>
+  <div class="form-example">
+    <input type="submit" value="Weather">
+  </div>
+</form>
+<section>
+ <div id="map"></div>
+</section>
+<script>
+
+const formElement = document.querySelector('form')
+async function handleSubmit(event) {
+  event.preventDefault();
+  const cityInputElement = document.querySelector('input[name="city"]');
+  console.dir(cityInputElement);
+  console.log(cityInputElement.value)
+
+try{
+const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q='+cityInputElement.value+'&appid=10339cea6d7fe1df8c35d1c7b2b9bc5e&lang=FR&units=metric')
+const weatherData = await response.json();
+L.marker([weatherData.coord.lat, weatherData.coord.lon])
+  .addTo(map)
+  .bindPopup("Il fait"+weatherData.main.temp+" à "+weatherData.name)
+  .openPopup();
+console.log(weatherData)
+} catch (error) {
+  console.error(error)
+}
+}
+formElement.addEventListener('submit', handleSubmit)
+
+const map = L.map('map').setView([51.505, -0.09], 3);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+</script>
+</body>
+</html>
